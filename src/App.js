@@ -19,7 +19,7 @@ const speechProperties = {
     }
 }
 
-const constraints = { video: {facingMode: 'user' }, audio: false  }
+const constraints = { video: {facingMode: 'environment' }, audio: false  }
 
 class App extends React.Component {
   constructor() {
@@ -50,7 +50,6 @@ class App extends React.Component {
   componentDidMount() {
     this.createSocket();
     let publisher = this.publisher.current;
-
     publisher.setAttribute('autoplay', '');
     publisher.setAttribute('muted', '');
     publisher.setAttribute('playsinline', '');
@@ -58,7 +57,6 @@ class App extends React.Component {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
         publisher.srcObject = stream;
-        // publisher.play();
       });
     }
 
