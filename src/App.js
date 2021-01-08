@@ -102,8 +102,8 @@ class App extends React.Component {
       }).catch(e => {
           console.error("An error occurred :", e)
       })
+      this.setState({textContent: this.state.textContent + imageData.text})
     }
-    this.setState({textContent: this.state.textContent + imageData.text})
   }
 
   render() {
