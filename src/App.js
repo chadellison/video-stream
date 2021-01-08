@@ -2,18 +2,46 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import Cable from 'actioncable';
+import Speech from 'speak-tts';
+
+const speechProperties = {
+  'volume': 1,
+    'lang': 'en-US',
+    'rate': 1,
+    'pitch': 1,
+    'voice':'Fiona',
+    'splitSentences': true,
+    'listeners': {
+      'onvoiceschanged': (voices) => {
+        // console.log("Event voiceschanged", voices)
+      }
+    }
+}
 
 class App extends React.Component {
   constructor() {
     super()
     this.publisher = React.createRef();
     this.canvas = React.createRef();
-    this.subscriber = React.createRef()
+    this.subscriber = React.createRef();
+    this.speech = this.initializeSpeech();
     this.state = {
       socket: {},
       analyzing: false,
       textContent: '',
     }
+  }
+
+  initializeSpeech() {
+    const speech = new Speech();
+      speech.init(speechProperties)
+      .then(data => {
+        console.log("Speech is ready", data);
+      })
+      .catch(e => {
+        console.error("An error occured while initializing : ", e);
+      });
+    return speech;
   }
 
   componentDidMount() {
@@ -60,14 +88,15 @@ class App extends React.Component {
   };
 
   handleReceivedEvent = (imageData) => {
-    console.log(imageData.text)
-    // let canvas = this.canvas.current
-    // let image = new Image();
-    // let context = canvas.getContext('2d')
-    // image.src = imageData;
-    // image.onload = function() {
-    //   context.drawImage(image, 0, 0);
-    // };
+    if (imageData.text.trim()) {
+      this.speech.speak({
+          text: `I see the text: ${imageData.text}`,
+      }).then(() => {
+          console.log("Success !")
+      }).catch(e => {
+          console.error("An error occurred :", e)
+      })
+    }
     this.setState({textContent: this.state.textContent + imageData.text})
   }
 
