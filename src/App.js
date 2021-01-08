@@ -55,11 +55,11 @@ class App extends React.Component {
       });
     }
 
-    // setInterval(() => {
-    //   if (this.state.analyzing) {
-    //     this.getFrame(publisher)
-    //   }
-    // }, 1000)
+    setInterval(() => {
+      if (this.state.analyzing) {
+        this.getFrame(publisher)
+      }
+    }, 1000)
   }
 
   onClick = () => {
@@ -68,9 +68,8 @@ class App extends React.Component {
 
   getFrame = () => {
     let canvas = this.canvas.current
-    console.log('hiihihih')
     canvas.getContext('2d').drawImage(this.publisher.current, 0, 0);
-    const data = canvas.toDataURL('image/jpeg', 0.25);
+    const data = canvas.toDataURL('image/jpeg', 0.5);
     this.state.socket.create(data)
   }
 
@@ -106,8 +105,8 @@ class App extends React.Component {
     return (
       <div className="App">
         <video id="publisher" ref={this.publisher} width="100%" height="50%" autoPlay></video>
-        <button id="analyze" onClick={() => this.getFrame(this.publisher.current)}>
-          Take Photo
+        <button id="analyze" onClick={this.onClick}>
+          {this.state.analyzing ? 'Stop Analysis' : 'Start Analysis'}
         </button>
         <button onClick={() => this.setState({textContent: ''})}>
           Clear Text
