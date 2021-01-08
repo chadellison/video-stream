@@ -3,11 +3,6 @@ import './App.css';
 import React from 'react';
 import Cable from 'actioncable';
 
-const onClick = () => {
-  'this is out photo'
-  console.log('hi');
-}
-
 class App extends React.Component {
   constructor() {
     super()
@@ -15,7 +10,8 @@ class App extends React.Component {
     this.canvas = React.createRef();
     this.subscriber = React.createRef()
     this.state = {
-      socket: {}
+      socket: {},
+      analyzing: false,
     }
   }
 
@@ -30,15 +26,25 @@ class App extends React.Component {
     }
 
 
-    setInterval(() => this.getFrame(publisher), 1000 / 10)
+    setInterval(() => {
+      if (this.state.analyzing) {
+        this.getFrame(publisher)
+      }
+    }, 1000 / 10)
   }
 
+  onClick = () => {
+    this.setState({analyzing: !this.state.analyzing})
+  }
+
+
   getFrame = (video) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // const canvas = document.createElement('canvas');
+    // canvas.width = video.videoWidth;
+    // canvas.height = video.videoHeight;
+    let canvas = this.canvas.current
     canvas.getContext('2d').drawImage(video, 0, 0);
-    const data = canvas.toDataURL('image/jpeg', 0.5);
+    const data = canvas.toDataURL('image/jpeg', 0.25);
     this.state.socket.create({ imageData: data })
   }
 
@@ -66,15 +72,16 @@ class App extends React.Component {
     image.onload = function() {
       context.drawImage(image, 0, 0);
     };
-    // canvas.toDataURL('image/png');
   }
 
   render() {
     return (
       <div className="App">
         <video id="publisher" ref={this.publisher} width="200" height="200" autoPlay></video>
-        <button id="snap" onClick={onClick}>Snap Photo</button>
-        <canvas id="canvas" ref={this.canvas} width="640" height="480"></canvas>
+        <button id="analyze" onClick={this.onClick}>
+          {this.state.analyzing ? 'Stop Analysis' : 'Begin Analysis'}
+        </button>
+        <canvas hidden={!this.state.analyzing} id="canvas" ref={this.canvas} width="640" height="480"></canvas>
       </div>
     );
   }
