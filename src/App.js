@@ -49,7 +49,7 @@ class App extends React.Component {
     this.createSocket();
     let publisher = this.publisher.current;
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      navigator.mediaDevices.getUserMedia({ video: {facingMode: 'user' } }).then((stream) => {
         publisher.srcObject = stream;
         publisher.play();
       });
