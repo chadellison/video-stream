@@ -12,6 +12,7 @@ class App extends React.Component {
     this.state = {
       socket: {},
       analyzing: false,
+      textContent: '',
     }
   }
 
@@ -25,27 +26,22 @@ class App extends React.Component {
       });
     }
 
-
     setInterval(() => {
       if (this.state.analyzing) {
         this.getFrame(publisher)
       }
-    }, 1000 / 10)
+    }, 1000)
   }
 
   onClick = () => {
     this.setState({analyzing: !this.state.analyzing})
   }
 
-
-  getFrame = (video) => {
-    // const canvas = document.createElement('canvas');
-    // canvas.width = video.videoWidth;
-    // canvas.height = video.videoHeight;
+  getFrame = () => {
     let canvas = this.canvas.current
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    const data = canvas.toDataURL('image/jpeg', 0.25);
-    this.state.socket.create({ imageData: data })
+    canvas.getContext('2d').drawImage(this.publisher.current, 0, 0);
+    const data = canvas.toDataURL('image/jpeg', 1);
+    this.state.socket.create(data)
   }
 
   createSocket() {
@@ -55,7 +51,7 @@ class App extends React.Component {
     },
     {
       connected: () => {},
-      received: (response) => this.handleReceivedEvent(response.imageData),
+      received: (imageData) => this.handleReceivedEvent(imageData),
       create: function(imageData) {
         this.perform('create', { imageData });
       }
@@ -64,24 +60,29 @@ class App extends React.Component {
   };
 
   handleReceivedEvent = (imageData) => {
-    console.log(imageData)
-    let canvas = this.canvas.current
-    let image = new Image();
-    let context = canvas.getContext('2d')
-    image.src = imageData;
-    image.onload = function() {
-      context.drawImage(image, 0, 0);
-    };
+    console.log(imageData.text)
+    // let canvas = this.canvas.current
+    // let image = new Image();
+    // let context = canvas.getContext('2d')
+    // image.src = imageData;
+    // image.onload = function() {
+    //   context.drawImage(image, 0, 0);
+    // };
+    this.setState({textContent: this.state.textContent + imageData.text})
   }
 
   render() {
     return (
       <div className="App">
-        <video id="publisher" ref={this.publisher} width="200" height="200" autoPlay></video>
+        <video id="publisher" ref={this.publisher} width="100%" height="50%" autoPlay></video>
         <button id="analyze" onClick={this.onClick}>
-          {this.state.analyzing ? 'Stop Analysis' : 'Begin Analysis'}
+          {this.state.analyzing ? 'Stop Analysis' : 'Start Analysis'}
         </button>
-        <canvas hidden={!this.state.analyzing} id="canvas" ref={this.canvas} width="640" height="480"></canvas>
+        <button onClick={() => this.setState({textContent: ''})}>
+          Clear Text
+        </button>
+        <canvas hidden={true} id="canvas" ref={this.canvas} width="640" height="480"></canvas>
+        <div>{this.state.textContent}</div>
       </div>
     );
   }
