@@ -19,6 +19,8 @@ const speechProperties = {
     }
 }
 
+const constraints = { video: {facingMode: 'user' }, audio: false  }
+
 class App extends React.Component {
   constructor() {
     super()
@@ -48,8 +50,14 @@ class App extends React.Component {
   componentDidMount() {
     this.createSocket();
     let publisher = this.publisher.current;
+
+    publisher.setAttribute('autoplay', '');
+    publisher.setAttribute('muted', '');
+    publisher.setAttribute('playsinline', '');
+
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: {facingMode: 'user' } }).then((stream) => {
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        track = stream.getTracks()[0];
         publisher.srcObject = stream;
         publisher.play();
       });
