@@ -69,7 +69,7 @@ class App extends React.Component {
   getFrame = () => {
     let canvas = this.canvas.current
     canvas.getContext('2d').drawImage(this.publisher.current, 0, 0);
-    const data = canvas.toDataURL('image/jpeg', 1);
+    const data = canvas.toDataURL('image/jpeg', 0.1);
     this.state.socket.create(data)
   }
 
