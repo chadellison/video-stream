@@ -57,9 +57,8 @@ class App extends React.Component {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-        track = stream.getTracks()[0];
         publisher.srcObject = stream;
-        publisher.play();
+        // publisher.play();
       });
     }
 
