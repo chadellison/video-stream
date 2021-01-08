@@ -3,6 +3,7 @@ import './App.css';
 import React from 'react';
 import Cable from 'actioncable';
 import Speech from 'speak-tts';
+import { WEBSOCKET_HOST } from './baseServerUrl.js';
 
 const speechProperties = {
   'volume': 1,
@@ -73,7 +74,7 @@ class App extends React.Component {
   }
 
   createSocket() {
-    let cable = Cable.createConsumer('ws://localhost:3001/cable')
+    let cable = Cable.createConsumer(WEBSOCKET_HOST)
     let socket = cable.subscriptions.create({
       channel: 'VideoChannel'
     },
