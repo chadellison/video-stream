@@ -109,14 +109,14 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <video id="publisher" ref={this.publisher} width="100%" height="50%" autoPlay></video>
+        <video id="publisher" ref={this.publisher} width="360" height="300" autoPlay></video>
         <button id="analyze" onClick={this.onClick}>
           {this.state.analyzing ? 'Stop Analysis' : 'Start Analysis'}
         </button>
         <button onClick={() => this.setState({textContent: ''})}>
           Clear Text
         </button>
-        <canvas hidden={true} id="canvas" ref={this.canvas} width="640" height="480"></canvas>
+        <canvas hidden={true} id="canvas" ref={this.canvas} width="660" height="550"></canvas>
         <div>{this.state.textContent}</div>
       </div>
     );
