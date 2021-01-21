@@ -72,7 +72,9 @@ class App extends React.Component {
   }
 
   getFrame = () => {
-    let canvas = this.canvas.current
+    let canvas = document.createElement('canvas')
+    canvas.width = 715
+    canvas.height = 535
     canvas.getContext('2d').drawImage(this.publisher.current, 0, 0);
     const data = canvas.toDataURL('image/jpeg', 0.5);
     this.state.socket.create(data)
@@ -94,6 +96,9 @@ class App extends React.Component {
   };
 
   handleReceivedEvent = (imageData) => {
+    let canvas = this.canvas.current
+    let context = canvas.getContext('2d');
+
     if (imageData.text.trim()) {
       this.speech.speak({
           text: `I see the text: ${imageData.text}`,
@@ -102,21 +107,28 @@ class App extends React.Component {
       }).catch(e => {
           console.error("An error occurred :", e)
       })
+
       this.setState({textContent: this.state.textContent + imageData.text})
     }
+    let image = new Image();
+    image.onload = () => {
+      context.drawImage(image, 0, 0);
+    }
+    image.src = imageData.image
+    context.drawImage(image, 0, 0)
   }
 
   render() {
     return (
       <div className="App">
-        <video id="publisher" ref={this.publisher} width="360" height="300" autoPlay></video>
+        <video id="publisher" ref={this.publisher} width="360" height="320" autoPlay></video>
         <button id="analyze" onClick={this.onClick}>
           {this.state.analyzing ? 'Stop Analysis' : 'Start Analysis'}
         </button>
         <button onClick={() => this.setState({textContent: ''})}>
           Clear Text
         </button>
-        <canvas hidden={true} id="canvas" ref={this.canvas} width="660" height="550"></canvas>
+        <canvas id="canvas" ref={this.canvas} width="355" height="265"></canvas>
         <div>{this.state.textContent}</div>
       </div>
     );
